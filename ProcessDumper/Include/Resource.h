@@ -1,0 +1,2 @@
+#define IDR_DRIVER 101
+#define DRIVER_DATAFILE 101

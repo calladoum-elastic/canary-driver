@@ -83,25 +83,17 @@ MinifilterDriverPreCreateSectionOperation(
     _Flt_CompletionContext_Outptr_ PVOID* CompletionContext);
 EXTERN_C_END
 
-NTSTATUS
-CreateDeviceObject(_In_ PDRIVER_OBJECT);
-
-
-NTSTATUS
-DestroyDeviceObject();
-
 
 struct GlobalContext
 {
-    Utils::KMutex ContextLock;
+    Utils::KQueuedSpinLock ContextLock;
     PFLT_FILTER FilterHandle {nullptr};
-    UNICODE_STRING FilePathPattern {0};
+    UNICODE_STRING FilePathPattern {};
     PKEVENT ActivityEvent {nullptr};
     PDRIVER_OBJECT DriverObject {nullptr};
-    PDEVICE_OBJECT DeviceObject {nullptr};
-    UNICODE_STRING DeviceName    = RTL_CONSTANT_STRING(DEVICE_PATH_WIDE);
-    UNICODE_STRING DeviceSymLink = RTL_CONSTANT_STRING(DOS_DEVICE_PATH_WIDE);
     ULONG LastPid {0};
+    PFLT_PORT CommunicationServerPort {nullptr};
+    PFLT_PORT CommunicationClientPorts[1] = {0};
 
     const FLT_OPERATION_REGISTRATION Callbacks[6] = {
         // {IRP_MJ_CREATE, 0, MinifilterDriverDefaultCallback},
@@ -132,6 +124,32 @@ struct GlobalContext
         nullptr,                       //  GenerateDestinationFileName
         nullptr                        //  NormalizeNameComponent
     };
+
+    void
+    Cleanup()
+    {
+        Utils::KLock ScopedLock {ContextLock};
+
+        if ( CommunicationServerPort )
+        {
+            ::FltCloseCommunicationPort(CommunicationServerPort);
+            CommunicationServerPort = nullptr;
+        }
+
+        if ( CommunicationClientPorts[0] )
+        {
+            ::FltCloseCommunicationPort(CommunicationClientPorts[0]);
+            CommunicationClientPorts[0] = nullptr;
+        }
+
+        if ( FilterHandle )
+        {
+            ::FltUnregisterFilter(FilterHandle);
+            FilterHandle = nullptr;
+        }
+
+        ok(L"Context cleanup ok");
+    }
 
     static void*
     operator new(usize sz)

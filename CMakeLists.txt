@@ -28,6 +28,4 @@ find_package(WDK REQUIRED)
 
 add_subdirectory(Common)
 add_subdirectory(MiniFilter)
-add_subdirectory(ProcessDumper)
-
-# list(APPEND VCPKG_MANIFEST_FEATURES "ProcessDumper")
+add_subdirectory(CanaryMonitor)

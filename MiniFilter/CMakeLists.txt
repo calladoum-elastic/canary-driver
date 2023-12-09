@@ -7,7 +7,6 @@ wdk_add_driver(${PROJECT_NAME}
     1.15
 
     MinifilterDriver.cpp
-    Device.cpp
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG=1 KERNEL_MODE=1)
@@ -34,6 +33,8 @@ add_custom_command(
     ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.inf "$<TARGET_FILE_DIR:MinifilterDriver>/${PROJECT_NAME}.inf"
     COMMAND
     ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${PROJECT_NAME}> "$ENV{TEMP}"
+    COMMAND
+    ${CMAKE_COMMAND} -E copy_if_different ${INF_FILE} "$ENV{TEMP}"
     COMMENT
     "Signing driver with self-signed certificate"
 )

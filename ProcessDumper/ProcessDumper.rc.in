@@ -1,4 +1,0 @@
-#include <Winver.h>
-#include "Resource.h"
-
-IDR_DRIVER         DRIVER_DATAFILE       "@DUMPER_DRIVER_PATH@"

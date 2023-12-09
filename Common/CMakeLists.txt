@@ -9,7 +9,6 @@ wdk_add_library(${PROJECT_NAME}
 
     ../Common/Log.cpp
     ../Common/Log.hpp
-    ../Common/Utils.cpp
     ../Common/Utils.hpp
 )
 

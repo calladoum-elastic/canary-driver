@@ -18,6 +18,9 @@ void
 Log(_In_ const wchar_t* FormatString, ...);
 
 void
+Log(_In_ const char* FormatString, ...);
+
+void
 ntperror(_In_ const wchar_t* prefix, _In_ NTSTATUS Status);
 }; // namespace Log
 

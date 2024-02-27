@@ -6,6 +6,7 @@ env:
   VERBOSE: 1
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches:
